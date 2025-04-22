@@ -1,0 +1,202 @@
+{% extends "layout.html" %}
+
+{% block title %}Pago de Reserva - Agencia de Viajes{% endblock %}
+
+{% block content %}
+<h2>Pago de Reserva</h2>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Información de Pago</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('cliente.pago') }}">
+                    <input type="hidden" name="reserva_id" value="{{ reserva.id }}">
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="metodo_pago" class="form-label">Método de Pago</label>
+                            <select class="form-select" id="metodo_pago" name="metodo_pago" required>
+                                <option value="" selected disabled>Seleccione un método de pago</option>
+                                <option value="tarjeta">Tarjeta de Crédito/Débito</option>
+                                <option value="paypal">PayPal</option>
+                                <option value="transferencia">Transferencia Bancaria</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Tarjeta de Crédito -->
+                    <div id="tarjeta-form" style="display: none;">
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="titular" class="form-label">Nombre del Titular</label>
+                                <input type="text" class="form-control" id="titular" name="titular">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="numero_tarjeta" class="form-label">Número de Tarjeta</label>
+                                <input type="text" class="form-control" id="numero_tarjeta" name="numero_tarjeta" placeholder="XXXX XXXX XXXX XXXX">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="fecha_expiracion" class="form-label">Fecha de Expiración</label>
+                                <input type="text" class="form-control" id="fecha_expiracion" name="fecha_expiracion" placeholder="MM/AA">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- PayPal -->
+                    <div id="paypal-form" style="display: none;">
+                        <div class="alert alert-info">
+                            <i class="fab fa-paypal"></i> Serás redirigido a PayPal para completar el pago después de hacer clic en "Pagar Ahora".
+                        </div>
+                    </div>
+                    
+                    <!-- Transferencia Bancaria -->
+                    <div id="transferencia-form" style="display: none;">
+                        <div class="alert alert-info">
+                            <p><i class="fas fa-university"></i> Datos para la transferencia:</p>
+                            <p><strong>Banco:</strong> Banco de Ejemplo</p>
+                            <p><strong>Titular:</strong> Agencia de Viajes S.A.</p>
+                            <p><strong>IBAN:</strong> ES12 3456 7890 1234 5678 9012</p>
+                            <p><strong>Referencia:</strong> Incluya el código de reserva: {{ reserva.codigo }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="comprobante" class="form-label">Comprobante de Transferencia (opcional)</label>
+                            <input type="file" class="form-control" id="comprobante" name="comprobante">
+                        </div>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="terminos" name="terminos" required>
+                        <label class="form-check-label" for="terminos">
+                            He leído y acepto los <a href="#" data-bs-toggle="modal" data-bs-target="#terminosModal">términos y condiciones</a>
+                        </label>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-lock"></i> Pagar Ahora
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Resumen de la Reserva</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Código de Reserva:</strong> {{ reserva.codigo }}</p>
+                
+                {% if reserva.paquete %}
+                <p><strong>Paquete:</strong> {{ reserva.paquete.nombre }}</p>
+                {% endif %}
+                
+                {% if reserva.hotel %}
+                <p><strong>Hotel:</strong> {{ reserva.hotel.nombre }}</p>
+                {% endif %}
+                
+                {% if reserva.vuelo %}
+                <p><strong>Vuelo:</strong> {{ reserva.vuelo.origen }} - {{ reserva.vuelo.destino }}</p>
+                {% endif %}
+                
+                <p><strong>Fecha:</strong> {{ reserva.fecha_inicio }} al {{ reserva.fecha_fin }}</p>
+                <p><strong>Personas:</strong> {{ reserva.num_personas }}</p>
+                
+                <hr>
+                <h5 class="mb-3">Detalles del Pago</h5>
+                <div class="d-flex justify-content-between">
+                    <span>Subtotal:</span>
+                    <span>${{ reserva.subtotal }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>Impuestos (16%):</span>
+                    <span>${{ reserva.impuestos }}</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <h5>Total:</h5>
+                    <h5>${{ reserva.precio_total }}</h5>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Política de Cancelación</h4>
+            </div>
+            <div class="card-body">
+                <p><i class="fas fa-info-circle"></i> Cancelación sin costo hasta 48 horas antes de la fecha de inicio.</p>
+                <p><i class="fas fa-exclamation-triangle"></i> Cancelaciones posteriores tienen un cargo del 30% del valor total.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Términos y Condiciones -->
+<div class="modal fade" id="terminosModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Términos y Condiciones</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Reservas y Pagos</h6>
+                <p>Las reservas se confirman una vez recibido el pago completo. Los precios están sujetos a cambios sin previo aviso hasta que se confirme la reserva.</p>
+                
+                <h6>2. Cancelaciones y Reembolsos</h6>
+                <p>Las cancelaciones realizadas con más de 48 horas de antelación a la fecha de inicio recibirán un reembolso completo. Las cancelaciones posteriores tendrán un cargo del 30% del valor total.</p>
+                
+                <h6>3. Documentación</h6>
+                <p>Es responsabilidad del cliente asegurarse de tener todos los documentos necesarios para el viaje (pasaportes, visas, etc.).</p>
+                
+                <h6>4. Seguros</h6>
+                <p>Se recomienda contratar un seguro de viaje. La agencia no se hace responsable por pérdidas, daños o accidentes durante el viaje.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendido</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const metodoPago = document.getElementById('metodo_pago');
+        const tarjetaForm = document.getElementById('tarjeta-form');
+        const paypalForm = document.getElementById('paypal-form');
+        const transferenciaForm = document.getElementById('transferencia-form');
+        
+        metodoPago.addEventListener('change', function() {
+            // Ocultar todos los formularios
+            tarjetaForm.style.display = 'none';
+            paypalForm.style.display = 'none';
+            transferenciaForm.style.display = 'none';
+            
+            // Mostrar el formulario seleccionado
+            if (this.value === 'tarjeta') {
+                tarjetaForm.style.display = 'block';
+            } else if (this.value === 'paypal') {
+                paypalForm.style.display = 'block';
+            } else if (this.value === 'transferencia') {
+                transferenciaForm.style.display = 'block';
+            }
+        });
+    });
+</script>
+{% endblock %}

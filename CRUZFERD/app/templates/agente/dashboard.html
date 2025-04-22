@@ -1,0 +1,342 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard de Agente - Agencia de Viajes{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2><i class="fas fa-tachometer-alt"></i> Dashboard de Agente</h2>
+            <p class="text-muted">Panel de control para gestionar reservas y visualizar métricas de ventas</p>
+        </div>
+    </div>
+
+    <!-- Resumen de Métricas -->
+    <div class="row mt-4">
+        <!-- Ventas Totales -->
+        <div class="col-md-3 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Ventas Totales (Este Mes)</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {% if ventas_mensuales and ventas_mensuales|length > 0 %}
+                                    ${{ ventas_mensuales[0].total_ventas }}
+                                {% else %}
+                                    $0
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservas Totales -->
+        <div class="col-md-3 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Reservas (Este Mes)</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {% if ventas_mensuales and ventas_mensuales|length > 0 %}
+                                    {{ ventas_mensuales[0].cantidad_reservas }}
+                                {% else %}
+                                    0
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Destino Popular -->
+        <div class="col-md-3 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Destino Más Popular</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {% if destinos_top and destinos_top|length > 0 %}
+                                    {{ destinos_top[0].destino }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-map-marker-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paquete Popular -->
+        <div class="col-md-3 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Paquete Más Vendido</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {% if paquetes_top and paquetes_top|length > 0 %}
+                                    {{ paquetes_top[0].nombre }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-suitcase fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Gráfico de Ventas Mensuales -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Ventas Mensuales</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="ventasChart" style="min-height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Destinos Más Populares -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Destinos Más Populares</h6>
+                </div>
+                <div class="card-body">
+                    {% if destinos_top %}
+                        {% for destino in destinos_top %}
+                            <h4 class="small font-weight-bold">{{ destino.destino }} <span class="float-right">{{ destino.cantidad }} reservas</span></h4>
+                            <div class="progress mb-4">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: {{ (destino.cantidad / destinos_top[0].cantidad * 100)|int }}%" 
+                                     aria-valuenow="{{ (destino.cantidad / destinos_top[0].cantidad * 100)|int }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center">No hay datos disponibles</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Paquetes Más Vendidos -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Paquetes Más Vendidos</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Paquete</th>
+                                    <th>Cantidad</th>
+                                    <th>Total Ventas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if paquetes_top %}
+                                    {% for paquete in paquetes_top %}
+                                        <tr>
+                                            <td>{{ paquete.nombre }}</td>
+                                            <td>{{ paquete.cantidad }}</td>
+                                            <td>${{ paquete.total_ventas }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center">No hay datos disponibles</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservas Recientes -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Reservas Recientes</h6>
+                    <a href="{{ url_for('agente.reservas') }}" class="btn btn-sm btn-primary">Ver Todas</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Cliente</th>
+                                    <th>Destino</th>
+                                    <th>Estado</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if reservas_recientes %}
+                                    {% for reserva in reservas_recientes %}
+                                        <tr>
+                                            <td>{{ reserva.id }}</td>
+                                            <td>{{ reserva.cliente }}</td>
+                                            <td>
+                                                {% if reserva.paquete %}
+                                                    {{ reserva.paquete }}
+                                                {% elif reserva.hotel %}
+                                                    {{ reserva.hotel }}
+                                                {% elif reserva.vuelo %}
+                                                    {{ reserva.vuelo }}
+                                                {% else %}
+                                                    N/A
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if reserva.estado == 'confirmada' %}
+                                                    <span class="badge bg-success">Confirmada</span>
+                                                {% elif reserva.estado == 'pendiente' %}
+                                                    <span class="badge bg-warning">Pendiente</span>
+                                                {% elif reserva.estado == 'cancelada' %}
+                                                    <span class="badge bg-danger">Cancelada</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ reserva.estado }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ reserva.fecha_reserva }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">No hay reservas recientes</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Datos para el gráfico de ventas mensuales
+        var ctx = document.getElementById('ventasChart').getContext('2d');
+        
+        // Transformar datos del servidor para Chart.js
+        var meses = [];
+        var ventas = [];
+        var cantidades = [];
+        
+        {% if ventas_mensuales %}
+            {% for venta in ventas_mensuales %}
+                meses.push('{{ venta.mes }}');
+                ventas.push({{ venta.total_ventas }});
+                cantidades.push({{ venta.cantidad_reservas }});
+            {% endfor %}
+            // Invertir arrays para mostrar en orden cronológico
+            meses.reverse();
+            ventas.reverse();
+            cantidades.reverse();
+        {% endif %}
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: meses,
+                datasets: [{
+                    label: 'Ventas ($)',
+                    data: ventas,
+                    backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                    borderColor: 'rgba(78, 115, 223, 1)',
+                    pointRadius: 3,
+                    pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                    pointBorderColor: 'rgba(78, 115, 223, 1)',
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: 'rgba(78, 115, 223, 1)',
+                    pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                    tension: 0.3,
+                    fill: true,
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Cantidad de Reservas',
+                    data: cantidades,
+                    backgroundColor: 'rgba(28, 200, 138, 0)',
+                    borderColor: 'rgba(28, 200, 138, 1)',
+                    pointRadius: 3,
+                    pointBackgroundColor: 'rgba(28, 200, 138, 1)',
+                    pointBorderColor: 'rgba(28, 200, 138, 1)',
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: 'rgba(28, 200, 138, 1)',
+                    pointHoverBorderColor: 'rgba(28, 200, 138, 1)',
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                    tension: 0.3,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Ventas ($)'
+                        }
+                    },
+                    y1: {
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Cantidad de Reservas'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle de Reserva</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <h2 class="mb-4">Detalles de la Reserva</h2>
+
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Cliente: {{ reserva.cliente }}</h5>
+                <p class="card-text">
+                    <strong>Correo:</strong> {{ reserva.correo_cliente }}<br>
+                    <strong>Fecha de reserva:</strong> {{ reserva.fecha_reserva }}<br>
+                    <strong>Estado:</strong> {{ reserva.estado | capitalize }}
+                </p>
+
+                <form method="POST" action="{{ url_for('agente.actualizar_reserva', id=reserva.id) }}" class="row g-3">
+                    <div class="col-auto">
+                        <select name="estado" class="form-select">
+                            <option value="pendiente" {% if reserva.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                            <option value="confirmada" {% if reserva.estado == 'confirmada' %}selected{% endif %}>Confirmada</option>
+                            <option value="cancelada" {% if reserva.estado == 'cancelada' %}selected{% endif %}>Cancelada</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-primary" type="submit">Actualizar Estado</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if reserva.paquete_nombre %}
+        <div class="card mb-3">
+            <div class="card-header bg-secondary text-white">
+                Paquete
+            </div>
+            <div class="card-body">
+                <h5>{{ reserva.paquete_nombre }}</h5>
+                <p>{{ reserva.paquete_descripcion }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if reserva.hotel_nombre %}
+        <div class="card mb-3">
+            <div class="card-header bg-info text-white">
+                Hotel
+            </div>
+            <div class="card-body">
+                <h5>{{ reserva.hotel_nombre }}</h5>
+                <p>{{ reserva.hotel_descripcion }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if reserva.aerolinea %}
+        <div class="card mb-3">
+            <div class="card-header bg-warning text-dark">
+                Vuelo
+            </div>
+            <div class="card-body">
+                <p><strong>Aerolínea:</strong> {{ reserva.aerolinea }}</p>
+                <p><strong>Ruta:</strong> {{ reserva.origen }} → {{ reserva.destino }}</p>
+                <p><strong>Salida:</strong> {{ reserva.fecha_salida }}</p>
+                <p><strong>Llegada:</strong> {{ reserva.fecha_llegada }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <a href="{{ url_for('agente.reservas') }}" class="btn btn-outline-secondary mt-3">← Volver al listado</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

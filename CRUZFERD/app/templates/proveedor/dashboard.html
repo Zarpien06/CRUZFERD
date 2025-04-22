@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+
+{% block title %}Panel de Proveedor{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Panel de Proveedor</h1>
+    
+    <div class="row mt-4">
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    Resumen de Disponibilidad
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Total</th>
+                                    <th>Disponibles</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in disponibilidad %}
+                                <tr>
+                                    <td>{{ item.tipo|capitalize }}</td>
+                                    <td>{{ item.total }}</td>
+                                    <td>{{ item.disponibles }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    Acciones Rápidas
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="{{ url_for('proveedor.hoteles') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-hotel"></i> Gestionar Hoteles
+                        </a>
+                        <a href="{{ url_for('proveedor.vuelos') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plane"></i> Gestionar Vuelos
+                        </a>
+                        <a href="{{ url_for('proveedor.paquetes') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-box"></i> Gestionar Paquetes
+                        </a>
+                        <a href="{{ url_for('proveedor.carga_masiva') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-upload"></i> Carga Masiva
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    Historial de Actualizaciones
+                </div>
+                <div class="card-body">
+                    {% if actualizaciones %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                    <th>Nombre</th>
+                                    <th>Disponible</th>
+                                    <th>Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for act in actualizaciones %}
+                                <tr>
+                                    <td>{{ act.fecha_actualizacion.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>{{ act.tipo|capitalize }}</td>
+                                    <td>{{ act.nombre_item }}</td>
+                                    <td>
+                                        {% if act.disponible %}
+                                        <span class="badge bg-success">Disponible</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">No Disponible</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>${{ act.precio }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Aún no hay actualizaciones registradas.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

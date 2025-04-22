@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUZFERD - Tu agencia de viajes de confianza</title>
+    <link rel="shortcut icon" href="" type="image/x-icon">
+    <link rel="shortcut icon" href= "{{ url_for('static', filename='img/logo.png') }}" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+    <!-- Barra de navegación actualizada -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('public.index') }}">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo CRUZFERD" height="40">
+                CRUZFERD
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('public.index') }}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/vuelos">Vuelos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/hoteles">Hoteles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('public.promociones') }}">Promociones</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('public.contacto') }}">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('public.acerca_de') }}">Sobre Nosotros</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="phone-number me-3 text-light">
+                        <i class="fas fa-phone-alt me-1"></i> +57 322 7813 912
+                    </div>
+                    <a class="btn btn-outline-light" href="{{ url_for('auth.login') }}">Iniciar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section con video de fondo y diseño moderno -->
+<header class="hero-section position-relative">
+    <div class="hero-video-container position-absolute top-0 start-0 w-100 h-100 overflow-hidden">
+        <video autoplay muted loop class="w-100 h-100 object-fit-cover">
+            <source src="{{ url_for('static', filename='IMG/VIDEO.mp4') }}" type="video/mp4">
+        </video>
+        <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(0, 0, 0, 0.5);"></div>
+    </div>
+    <div class="container position-relative z-2">
+        <div class="row min-vh-100 align-items-center justify-content-center text-center text-lg-start">
+            <div class="col-lg-8 text-white">
+                <h1 class="display-3 fw-bold animate__animated animate__fadeInDown">
+                    El mundo te espera, <span class="text-primary">viaja con CRUZFERD</span>
+                </h1>
+                <p class="lead mb-4 animate__animated animate__fadeInUp">
+                    Descubre destinos increíbles y vive experiencias inolvidables con nuestros paquetes personalizados
+                </p>
+                <div class="d-grid gap-3 d-sm-flex justify-content-center justify-content-lg-start animate__animated animate__fadeInUp animate__delay-1s">
+                    <a class="btn btn-primary btn-lg px-4" href="#search-section">Buscar Ahora</a>
+                    <a class="btn btn-outline-light btn-lg px-4" href="{{ url_for('public.promociones') }}">Ver Promociones</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+    <!-- Buscador mejorado con pestañas -->
+    <section id="search-section" class="py-5 bg-light">
+        <div class="container">
+            <div class="card search-card shadow-lg">
+                <div class="card-body p-4">
+                    <ul class="nav nav-tabs mb-3" id="searchTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="vuelos-tab" data-bs-toggle="tab" data-bs-target="#vuelos" type="button" role="tab" aria-selected="true">
+                                <i class="fas fa-plane me-2"></i>Vuelos
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="hoteles-tab" data-bs-toggle="tab" data-bs-target="#hoteles" type="button" role="tab" aria-selected="false">
+                                <i class="fas fa-hotel me-2"></i>Hoteles
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="paquetes-tab" data-bs-toggle="tab" data-bs-target="#paquetes" type="button" role="tab" aria-selected="false">
+                                <i class="fas fa-suitcase me-2"></i>Paquetes
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="searchTabsContent">
+                        <div class="tab-pane fade show active" id="vuelos" role="tabpanel" aria-labelledby="vuelos-tab">
+                            <form class="row g-3">
+                                <div class="col-md-3">
+                                    <label for="origen" class="form-label">Origen</label>
+                                    <select class="form-select" id="origen" name="origen" required>
+                                        <option value="" selected disabled>Ciudad de origen</option>
+                                        <option value="bogota">Bogotá</option>
+                                        <option value="medellin">Medellín</option>
+                                        <option value="cali">Cali</option>
+                                        <option value="cartagena">Cartagena</option>
+                                        <option value="barranquilla">Barranquilla</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="destino" class="form-label">Destino</label>
+                                    <select class="form-select" id="destino" name="destino" required>
+                                        <option value="" selected disabled>Ciudad de destino</option>
+                                        <option value="cancun">Cancún</option>
+                                        <option value="madrid">Madrid</option>
+                                        <option value="tokio">Tokio</option>
+                                        <option value="new_york">Nueva York</option>
+                                        <option value="paris">París</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="fecha_salida" class="form-label">Fecha ida</label>
+                                    <input type="date" class="form-control" id="fecha_salida" name="fecha_salida" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="fecha_regreso" class="form-label">Fecha regreso</label>
+                                    <input type="date" class="form-control" id="fecha_regreso" name="fecha_regreso" required>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="viajeros" class="form-label">Viajeros</label>
+                                    <select class="form-select" id="viajeros" name="viajeros">
+                                        <option value="1">1</option>
+                                        <option value="2" selected>2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5+</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="hoteles" role="tabpanel" aria-labelledby="hoteles-tab">
+                            <form class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="ciudad_hotel" class="form-label">Ciudad</label>
+                                    <select class="form-select" id="ciudad_hotel" name="ciudad_hotel" required>
+                                        <option value="" selected disabled>Seleccione una ciudad</option>
+                                        <option value="cartagena">Cartagena</option>
+                                        <option value="cancun">Cancún</option>
+                                        <option value="madrid">Madrid</option>
+                                        <option value="new_york">Nueva York</option>
+                                        <option value="paris">París</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="check_in" class="form-label">Check-in</label>
+                                    <input type="date" class="form-control" id="check_in" name="check_in" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="check_out" class="form-label">Check-out</label>
+                                    <input type="date" class="form-control" id="check_out" name="check_out" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="habitaciones" class="form-label">Habitaciones</label>
+                                    <select class="form-select" id="habitaciones" name="habitaciones">
+                                        <option value="1" selected>1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="huespedes" class="form-label">Huéspedes</label>
+                                    <select class="form-select" id="huespedes" name="huespedes">
+                                        <option value="1">1</option>
+                                        <option value="2" selected>2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5+</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="paquetes" role="tabpanel" aria-labelledby="paquetes-tab">
+                            <form class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="destino_paquete" class="form-label">Destino</label>
+                                    <select class="form-select" id="destino_paquete" name="destino_paquete" required>
+                                        <option value="" selected disabled>Seleccione un destino</option>
+                                        <option value="cancun">Cancún</option>
+                                        <option value="madrid">Madrid</option>
+                                        <option value="new_york">Nueva York</option>
+                                        <option value="paris">París</option>
+                                        <option value="cartagena">Cartagena</option>
+                                        <option value="baru">Barú</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="fecha_inicio" class="form-label">Fecha inicio</label>
+                                    <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="fecha_fin" class="form-label">Fecha fin</label>
+                                    <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="personas" class="form-label">Personas</label>
+                                    <select class="form-select" id="personas" name="personas">
+                                        <option value="1">1</option>
+                                        <option value="2" selected>2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5+</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">Buscar paquetes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ofertas Especiales -->
+    <section class="py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Ofertas Especiales</h2>
+                <p class="text-muted mb-0">Aprovecha nuestras promociones por tiempo limitado</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 shadow-sm hover-zoom">
+                        <div class="position-relative">
+                            <img src="{{ url_for('static', filename='img/destinos/cancun.jpg') }}" class="card-img-top" alt="Cancún">
+                            <div class="badge bg-danger position-absolute top-0 end-0 m-3 fs-6">-30%</div>
+                            <div class="badge bg-primary position-absolute top-0 start-0 m-3">Todo Incluido</div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Cancún, México</h5>
+                            <p class="card-text">Disfruta 7 noches en el paraíso caribeño con vuelos incluidos</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-decoration-line-through text-muted mb-0">$2,500</p>
+                                    <p class="fs-4 fw-bold text-primary">$1,750 <small class="text-muted fs-6">por persona</small></p>
+                                </div>
+                                <a href="#" class="btn btn-outline-primary">Ver más</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 shadow-sm hover-zoom">
+                        <div class="position-relative">
+                            <img src="{{ url_for('static', filename='img/destinos/new_york.jpg') }}" class="card-img-top" alt="Nueva York">
+                            <div class="badge bg-danger position-absolute top-0 end-0 m-3 fs-6">-25%</div>
+                            <div class="badge bg-info position-absolute top-0 start-0 m-3">Vuelo + Hotel</div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Nueva York, EE.UU.</h5>
+                            <p class="card-text">La Gran Manzana te espera con esta oferta de 5 días inolvidables</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-decoration-line-through text-muted mb-0">$1,800</p>
+                                    <p class="fs-4 fw-bold text-primary">$1,350 <small class="text-muted fs-6">por persona</small></p>
+                                </div>
+                                <a href="#" class="btn btn-outline-primary">Ver más</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 shadow-sm hover-zoom">
+                        <div class="position-relative">
+                            <img src="{{ url_for('static', filename='img/destinos/cartagena.jpg') }}" class="card-img-top" alt="Cartagena">
+                            <div class="badge bg-danger position-absolute top-0 end-0 m-3 fs-6">-20%</div>
+                            <div class="badge bg-success position-absolute top-0 start-0 m-3">Promoción Nacional</div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Cartagena, Colombia</h5>
+                            <p class="card-text">Ciudad histórica y playas paradisíacas en un paquete de 4 noches</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-decoration-line-through text-muted mb-0">$1,200</p>
+                                    <p class="fs-4 fw-bold text-primary">$960 <small class="text-muted fs-6">por persona</small></p>
+                                </div>
+                                <a href="#" class="btn btn-outline-primary">Ver más</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 shadow-sm hover-zoom">
+                        <div class="position-relative">
+                            <img src="{{ url_for('static', filename='img/destinos/madrid.jpg') }}" class="card-img-top" alt="Madrid">
+                            <div class="badge bg-danger position-absolute top-0 end-0 m-3 fs-6">-35%</div>
+                            <div class="badge bg-warning position-absolute top-0 start-0 m-3">Last Minute</div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Madrid, España</h5>
+                            <p class="card-text">Cultura, gastronomía y diversión en la capital española por 10 días</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-decoration-line-through text-muted mb-0">$2,800</p>
+                                    <p class="fs-4 fw-bold text-primary">$1,820 <small class="text-muted fs-6">por persona</small></p>
+                                </div>
+                                <a href="#" class="btn btn-outline-primary">Ver más</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Paquetes destacados -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Destinos Destacados</h2>
+            
+            {% if paquetes_destacados %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                {% for paquete in paquetes_destacados %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm hover-zoom">
+                        <img src="{{ url_for('static', filename='img/paquetes/' + paquete.imagen) }}" class="card-img-top" alt="{{ paquete.nombre }}">
+                        <div class="card-body">
+                            <div class="badge bg-primary mb-2">Destacado</div>
+                            <h5 class="card-title">{{ paquete.nombre }}</h5>
+                            <p class="card-text">{{ paquete.descripcion_corta }}</p>
+                            <p class="fs-4 fw-bold text-primary">${{ paquete.precio }} <small class="text-muted">por persona</small></p>
+                            <a href="#" class="btn btn-outline-primary">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Recomendados CRUZERD (mostrar cuando no hay paquetes destacados) -->
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm hover-zoom">
+                        <img src="{{ url_for('static', filename='img/destinos/baru.jpg') }}" class="card-img-top" alt="Barú">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Barú</h5>
+                            <p class="card-text">Reconecte con la naturaleza</p>
+                            <p class="card-text text-muted">Barú, Colombia</p>
+                            <a href="#" class="btn btn-outline-primary">Explorar</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 bg-primary text-white">
+                        <div class="card-body text-center d-flex flex-column justify-content-center align-items-center" style="min-height: 250px;">
+                            <i class="fas fa-hotel fa-3x mb-3"></i>
+                            <h5 class="card-title">Hotel</h5>
+                            <p class="card-text">Su alojamiento ideal está aquí</p>
+                            <a href="#" class="btn btn-outline-light mt-3">Buscar Hoteles</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm hover-zoom">
+                        <img src="{{ url_for('static', filename='img/destinos/new_york_2.jpg') }}" class="card-img-top" alt="Nueva York">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Nueva York</h5>
+                            <p class="card-text">Nueva York es su próxima aventura</p>
+                            <a href="#" class="btn btn-outline-primary">Descubrir</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="text-center mt-4">
+                <a href="{{ url_for('public.destinos') }}" class="btn btn-lg btn-outline-primary">Ver Todos los Destinos</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vuelos más baratos -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Vuelos más baratos</h2>
+            <p class="text-center mb-4">Las mejores ofertas de vuelos ida y vuelta</p>
+            
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="{{ url_for('static', filename='img/aerolineas/avianca.png') }}" alt="Avianca" height="40" class="me-3">
+                                <div>
+                                    <h6 class="mb-0 fw-bold">Avianca</h6>
+                                    <small class="text-muted">Bogotá → Miami</small>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-2">Del 10 al 17 de mayo, 2025</p>
+                            <p class="mb-3"><i class="fas fa-suitcase text-primary me-2"></i> Equipaje incluido</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-4 fw-bold text-primary">$520</span>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Reservar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="{{ url_for('static', filename='img/aerolineas/latam.jpg') }}" alt="LATAM" height="40" class="me-3">
+                                <div>
+                                    <h6 class="mb-0 fw-bold">LATAM</h6>
+                                    <small class="text-muted">Bogotá → Santiago</small>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-2">Del 1 al 8 de junio, 2025</p>
+                            <p class="mb-3"><i class="fas fa-suitcase text-primary me-2"></i> Equipaje incluido</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-4 fw-bold text-primary">$650</span>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Reservar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="{{ url_for('static', filename='img/aerolineas/aa.png') }}" alt="American Airlines" height="40" class="me-3">
+                                <div>
+                                    <h6 class="mb-0 fw-bold">American Airlines</h6>
+                                    <small class="text-muted">Bogotá → Nueva York</small>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-2">Del 15 al 22 de mayo, 2025</p>
+                            <p class="mb-3"><i class="fas fa-suitcase text-primary me-2"></i> Equipaje incluido</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-4 fw-bold text-primary">$680</span>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Reservar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{{ url_for('public.destinos') }}" class="btn btn-outline-primary">Ver todos los vuelos</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonios -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Lo que dicen nuestros clientes</h2>
+            
+            {% if testimonios %}
+            <div class="row">
+                {% for testimonio in testimonios %}
+                <div class="col-lg-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                {% for i in range(5) %}
+                                    {% if i < testimonio.calificacion %}
+                                    <i class="fas fa-star text-warning"></i>
+                                    {% else %}
+                                    <i class="far fa-star text-warning"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <p class="card-text">"{{ testimonio.comentario }}"</p>
+                            <p class="card-text"><small class="text-muted">- {{ testimonio.nombre }}</small></p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                            </div>
+                            <p class="card-text">"Excelente servicio, nuestra experiencia en Cancún fue maravillosa gracias a la detallada planificación que hizo CRUZFERD. Todo salió perfecto y sin contratiempos."</p>
+                            <p class="card-text"><small class="text-muted">- Carlos Ramírez</small></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star-half-alt text-warning"></i>
+                            </div>
+                            <p class="card-text">"La atención de CRUZFERD fue impecable. Respondieron todas nuestras dudas y nos consiguieron el mejor precio para nuestras vacaciones en familia a Madrid."</p>
+                            <p class="card-text"><small class="text-muted">- Laura Gómez</small></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="far fa-star text-warning"></i>
+                            </div>
+                            <p class="card-text">"Nuestra luna de miel en Cartagena fue inolvidable gracias a CRUZFERD. El paquete incluía todo lo que necesitábamos y más. Definitivamente volveremos a viajar con ellos."</p>
+                            <p class="card-text"><small class="text-muted">- Andrea y Julián</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Preguntas Frecuentes -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Preguntas Frecuentes</h2>
+            <p class="text-center mb-4">Encuentre respuestas a sus preguntas comunes sobre viajes</p>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    ¿Cómo puedo pagar mis reservas?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Ofrecemos múltiples formas de pago para su comodidad. Aceptamos tarjetas de crédito/débito (Visa, Mastercard, American Express, Diners Club), transferencias bancarias a través de PSE, y pagos en efectivo en nuestras sucursales. Todos los pagos online son procesados de manera segura a través de Place to Pay.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    ¿Puedo financiar mi viaje en cuotas?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Sí, ofrecemos opciones de financiación con tarjetas de crédito seleccionadas. Puedes elegir pagar en 3, 6, 12 o hasta 24 cuotas dependiendo del banco emisor de tu tarjeta. También contamos con alianzas con entidades financieras que te permiten acceder a créditos especiales para viajes.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    ¿Cómo puedo cambiar o cancelar mi reserva?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Para cambios o cancelaciones, debes comunicarte con nuestro centro de atención al cliente al +57 322 7813 912 o enviar un correo a cliente.com@cruzerd.com. Ten en cuenta que las políticas de cambios y cancelaciones varían según el tipo de reserva, destino y tiempo de anticipación. Te recomendamos revisar los términos y condiciones de tu reserva.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    ¿Qué documentos necesito para viajar?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Los documentos requeridos dependen del destino. Para viajes nacionales generalmente solo necesitas tu documento de identidad. Para viajes internacionales, necesitarás pasaporte vigente (con al menos 6 meses de validez) y, dependiendo del país, visa o permisos especiales. En CRUZFERD te informamos sobre todos los requisitos específicos al momento de realizar tu reserva.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Medios de pago -->
+            <div class="row mt-5">
+                <div class="col-12 text-center">
+                    <h4 class="mb-4">Nuestros medios de pago</h4>
+                    <p class="mb-4">Las mejores opciones para realizar su compra</p>
+                    <div class="payment-methods">
+                        <img src="{{ url_for('static', filename='img/pagos/visa.jpg') }}" alt="Visa" height="40" class="mx-2">
+                        <img src="{{ url_for('static', filename='img/pagos/mastercard.jpg') }}" alt="Mastercard" height="40" class="mx-2">
+                        <img src="{{ url_for('static', filename='img/pagos/amex.png') }}" alt="American Express" height="40" class="mx-2">
+                        <img src="{{ url_for('static', filename='img/pagos/diners.jpg') }}" alt="Diners Club" height="40" class="mx-2">
+                        <img src="{{ url_for('static', filename='img/pagos/pse.jpg') }}" alt="PSE" height="40" class="mx-2">
+                        <img src="{{ url_for('static', filename='img/pagos/efecty.png') }}" alt="Efecty" height="40" class="mx-2">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="py-5 bg-primary text-white">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h3>Suscríbete a nuestro boletín</h3>
+                    <p>Recibe las mejores ofertas y promociones directamente en tu correo.</p>
+                </div>
+                <div class="col-lg-6">
+                    <form class="row g-3">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control form-control-lg" placeholder="Nombre completo">
+                        </div>
+                        <div class="col-md-5">
+                            <input type="email" class="form-control form-control-lg" placeholder="Tu correo electrónico">
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-light btn-lg w-100">Suscribirse</button>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="receiveNewsletter">
+                                <label class="form-check-label" for="receiveNewsletter">
+                                    Me gustaría recibir boletines y ofertas especiales por correo electrónico.
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="acceptTerms">
+                                <label class="form-check-label" for="acceptTerms">
+                                    Autorizo el tratamiento de mis datos personales de conformidad con la política de datos y privacidad.
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 mb-4 mb-lg-0">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo CRUZFERD" height="40" class="mb-3">
+                    <p>Tu agencia de viajes de confianza desde 2005. Ofrecemos las mejores experiencias turísticas para tus vacaciones.</p>
+                    <div class="d-flex mt-3">
+                        <a href="#" class="btn btn-outline-light btn-sm me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="btn btn-outline-light btn-sm me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="btn btn-outline-light btn-sm me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="btn btn-outline-light btn-sm"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 mb-4 mb-lg-0">
+                    <h5>Acerca de nosotros</h5>
+                    <ul class="list-unstyled text-white-50">
+                        <li><a href="#" class="text-decoration-none text-white-50">Preguntas Frecuentes</a></li>
+                        <li><a href="#" class="text-decoration-none text-white-50">Contáctenos</a></li>
+                        <li><a href="#" class="text-decoration-none text-white-50">Sucursales CRUZFERD</a></li>
+                        <li><a href="#" class="text-decoration-none text-white-50">Organización CRUZFERD</a></li>
+                        <li><a href="#" class="text-decoration-none text-white-50">Trabaje con nosotros</a></li>
+                        <li><a href="#" class="text-decoration-none text-white-50">Premios y certificaciones</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 mb-4 mb-lg-0">
+                    <h5>Servicio al cliente</h5>
+                    <ul class="list-unstyled text-white-50">
+                        <li><a href="#" class="text-decoration-none text-white-50">Peticiones y reclamos</a></li>
+                        <li><a href="#" class="text-decoration-none text-white-50">Solicite su cotización aquí</a></li>
+                        <li><a href="#" class="text-decoration-none text-white-50">Evalúe nuestro sitio</a></li>
+                        <li><a href="#" class="text-decoration-none text-white-50">Escríbale a nuestro CEO</a></li>
+                        <li><a href="#" class="text-decoration-none text-white-50">Formulario de reversión de pagos</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h5>Contacto</h5>
+                    <ul class="list-unstyled text-white-50">
+                        <li><i class="fas fa-map-marker-alt me-2"></i> Cra. 11B #97-3, Chapinero, Bogotá, Colombia</li>
+                        <li><i class="fas fa-phone me-2"></i> Bogotá (601)3921716 | +57 322 7813 912</li>
+                        <li><i class="fas fa-envelope me-2"></i> cliente.com@cruzferd.com</li>
+                    </ul>
+                    <p class="mt-3 small">NIT: 860.000.018-2 | Agencia de viajes CRUZFERD SAS | Registro Nacional de Turismo No. 438-25561</p>
+                </div>
+            </div>
+            <hr class="my-4 bg-secondary">
+            <div class="row">
+                <div class="col-md-6 small">
+                    <p class="mb-md-0">© 2025 CRUZFERD - Todos los derechos reservados</p>
+                </div>
+                <div class="col-md-6 text-md-end small">
+                    <a href="#" class="text-decoration-none text-white-50 me-3">Términos y Condiciones</a>
+                    <a href="#" class="text-decoration-none text-white-50 me-3">Política de Privacidad</a>
+                    <a href="#" class="text-decoration-none text-white-50">SIC</a>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <p class="text-center small text-white-50">CRUZFERD apoya el trabajo de UNICEF comprometiéndose con la protección de los derechos de las niñas, niños y adolescentes en Colombia y el mundo.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>

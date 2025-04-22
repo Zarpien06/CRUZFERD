@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+
+{% block title %}Mi Panel - Agencia de Viajes{% endblock %}
+
+{% block content %}
+<h2>Bienvenido, {{ session.nombre }}</h2>
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Mis Reservas</h4>
+            </div>
+            <div class="card-body">
+                {% if reservas %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Fecha</th>
+                                    <th>Paquete/Hotel/Vuelo</th>
+                                    <th>Personas</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reserva in reservas %}
+                                <tr>
+                                    <td>{{ reserva.codigo }}</td>
+                                    <td>{{ reserva.fecha_inicio }} al {{ reserva.fecha_fin }}</td>
+                                    <td>
+                                        {% if reserva.paquete %}
+                                            <span class="badge bg-info">Paquete</span> {{ reserva.paquete }}
+                                        {% endif %}
+                                        {% if reserva.hotel %}
+                                            <span class="badge bg-secondary">Hotel</span> {{ reserva.hotel }}
+                                        {% endif %}
+                                        {% if reserva.vuelo %}
+                                            <span class="badge bg-warning text-dark">Vuelo</span> {{ reserva.vuelo }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ reserva.num_personas }}</td>
+                                    <td>${{ reserva.precio_total }}</td>
+                                    <td>
+                                        {% if reserva.estado == 'pendiente' %}
+                                            <span class="badge bg-warning text-dark">Pendiente</span>
+                                        {% elif reserva.estado == 'confirmada' %}
+                                            <span class="badge bg-success">Confirmada</span>
+                                        {% elif reserva.estado == 'cancelada' %}
+                                            <span class="badge bg-danger">Cancelada</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('cliente.voucher', id=reserva.id) }}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-receipt"></i> Ver Voucher
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        No tienes reservas actualmente. ¿Deseas <a href="{{ url_for('cliente.buscar') }}">buscar un viaje</a>?
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Acciones Rápidas</h4>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('cliente.buscar') }}" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Buscar Viajes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

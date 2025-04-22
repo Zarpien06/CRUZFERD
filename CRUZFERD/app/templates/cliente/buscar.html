@@ -1,0 +1,133 @@
+{% extends "layout.html" %}
+
+{% block title %}Buscar Viajes - Agencia de Viajes{% endblock %}
+
+{% block content %}
+<h2>Buscar Viajes</h2>
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Criterios de Búsqueda</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('cliente.buscar') }}">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="destino" class="form-label">Destino</label>
+                            <input type="text" class="form-control" id="destino" name="destino" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
+                            <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="fecha_fin" class="form-label">Fecha de Fin</label>
+                            <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Destinos Populares</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h5>Cancún, México</h5>
+                                <p>Playas paradisíacas y cultura maya</p>
+                                <form method="POST" action="{{ url_for('cliente.buscar') }}">
+                                    <input type="hidden" name="destino" value="Cancún">
+                                    <input type="hidden" name="fecha_inicio" value="{{ (now + timedelta(days=30)).strftime('%Y-%m-%d') }}">
+                                    <input type="hidden" name="fecha_fin" value="{{ (now + timedelta(days=37)).strftime('%Y-%m-%d') }}">
+                                    <button type="submit" class="btn btn-outline-primary">Explorar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h5>Roma, Italia</h5>
+                                <p>Historia milenaria y gastronomía</p>
+                                <form method="POST" action="{{ url_for('cliente.buscar') }}">
+                                    <input type="hidden" name="destino" value="Roma">
+                                    <input type="hidden" name="fecha_inicio" value="{{ (now + timedelta(days=60)).strftime('%Y-%m-%d') }}">
+                                    <input type="hidden" name="fecha_fin" value="{{ (now + timedelta(days=67)).strftime('%Y-%m-%d') }}">
+                                    <button type="submit" class="btn btn-outline-primary">Explorar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h5>Bali, Indonesia</h5>
+                                <p>Relax y bienestar tropical</p>
+                                <form method="POST" action="{{ url_for('cliente.buscar') }}">
+                                    <input type="hidden" name="destino" value="Bali">
+                                    <input type="hidden" name="fecha_inicio" value="{{ (now + timedelta(days=30)).strftime('%Y-%m-%d') }}">
+                                    <input type="hidden" name="fecha_fin" value="{{ (now + timedelta(days=100)).strftime('%Y-%m-%d') }}">
+                                    <button type="submit" class="btn btn-outline-primary">Explorar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Si hay resultados de búsqueda, mostrarlos aquí -->
+{% if resultados_busqueda %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Resultados de Búsqueda</h4>
+            </div>
+            <div class="card-body">
+                <!-- Resultados de paquetes, hoteles y vuelos se mostrarían aquí -->
+                <!-- Este código se completará en la página de resultados -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Establecer fechas por defecto
+    document.addEventListener('DOMContentLoaded', function() {
+        const hoy = new Date();
+        const mañana = new Date(hoy);
+        mañana.setDate(hoy.getDate() + 1);
+        
+        // Fecha de inicio: mañana
+        const fechaInicio = document.getElementById('fecha_inicio');
+        fechaInicio.valueAsDate = mañana;
+        
+        // Fecha de fin: 7 días después
+        const fechaFin = document.getElementById('fecha_fin');
+        const finViaje = new Date(hoy);
+        finViaje.setDate(hoy.getDate() + 8);
+        fechaFin.valueAsDate = finViaje;
+    });
+</script>
+{% endblock %}

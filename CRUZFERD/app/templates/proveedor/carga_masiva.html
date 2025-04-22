@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+
+{% block title %}Carga Masiva de Actualizaciones{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Carga Masiva de Actualizaciones</h1>
+    
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('proveedor.dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Carga Masiva</li>
+        </ol>
+    </nav>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Cargar Archivo JSON</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('proveedor.carga_masiva') }}" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="archivo_json" class="form-label">Seleccione archivo JSON con actualizaciones</label>
+                            <input class="form-control" type="file" id="archivo_json" name="archivo_json" accept=".json" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload"></i> Procesar Archivo
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Instrucciones</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Formato del archivo JSON:</h6>
+                    <p>El archivo debe contener un arreglo de objetos con la siguiente estructura:</p>
+                    <pre><code>[
+  {
+    "tipo": "hotel",
+    "id": 1,
+    "disponible": true,
+    "precio": 150.00
+  },
+  {
+    "tipo": "vuelo",
+    "id": 5,
+    "disponible": false
+  },
+  {
+    "tipo": "paquete",
+    "id": 3,
+    "disponible": true,
+    "precio": 1200.00
+  }
+]</code></pre>
+                    <p><strong>Notas:</strong></p>
+                    <ul>
+                        <li>El campo "tipo" puede ser: hotel, vuelo o paquete</li>
+                        <li>El campo "disponible" es un booleano (true/false)</li>
+                        <li>El campo "precio" es opcional</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mt-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">API para Actualizaciones</h5>
+        </div>
+        <div class="card-body">
+            <h6>Endpoint para actualizaciones automáticas:</h6>
+            <p>Para integraciones con sistemas externos, puede utilizar nuestro endpoint de API:</p>
+            
+            <div class="mb-3">
+                <code>POST /proveedor/api/actualizar</code>
+            </div>
+            
+            <h6>Ejemplo de solicitud:</h6>
+<pre><code>curl -X POST -H "Content-Type: application/json" -d '{
+  "tipo": "hotel",
+  "id": 2,
+  "disponible": true,
+  "precio": 180.00
+}' http://tudominio.com/proveedor/api/actualizar</code></pre>
+        </div>
+    </div>
+</div>
+{% endblock %}

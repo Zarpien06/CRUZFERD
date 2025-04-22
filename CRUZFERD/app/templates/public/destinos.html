@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block title %}Destinos Disponibles{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">Destinos Disponibles</h1>
+
+    {% if destinos %}
+    <div class="row">
+        {% for destino in destinos %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ destino.imagen }}" class="card-img-top" alt="{{ destino.nombre }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ destino.nombre }}</h5>
+                    <p class="card-text">{{ destino.descripcion }}</p>
+                    <p><strong>Pais:</strong> {{ destino.pais }}</p>
+                    <a href="#" class="btn btn-primary">Más Información</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center">No hay destinos disponibles en este momento.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+
+{% block title %}Gestión de Hoteles{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Gestión de Hoteles</h1>
+    
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('proveedor.dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Hoteles</li>
+        </ol>
+    </nav>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Listado de Hoteles</h5>
+        </div>
+        <div class="card-body">
+            {% if hoteles %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Ubicación</th>
+                            <th>Categoría</th>
+                            <th>Precio/Noche</th>
+                            <th>Disponibilidad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hotel in hoteles %}
+                        <tr>
+                            <td>{{ hotel.id }}</td>
+                            <td>{{ hotel.nombre }}</td>
+                            <td>{{ hotel.ubicacion }}</td>
+                            <td>
+                                {% for i in range(hotel.categoria) %}
+                                <i class="fas fa-star text-warning"></i>
+                                {% endfor %}
+                            </td>
+                            <td>${{ hotel.precio_noche }}</td>
+                            <td>
+                                {% if hotel.disponible %}
+                                <span class="badge bg-success">Disponible</span>
+                                {% else %}
+                                <span class="badge bg-danger">No Disponible</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#hotelModal{{ hotel.id }}">
+                                    <i class="fas fa-edit"></i> Actualizar
+                                </button>
+                                
+                                <!-- Modal de actualización -->
+                                <div class="modal fade" id="hotelModal{{ hotel.id }}" tabindex="-1" aria-labelledby="hotelModalLabel{{ hotel.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="hotelModalLabel{{ hotel.id }}">Actualizar Hotel: {{ hotel.nombre }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form action="{{ url_for('proveedor.actualizar_hotel', id=hotel.id) }}" method="POST">
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="precio{{ hotel.id }}" class="form-label">Precio por noche ($)</label>
+                                                        <input type="number" step="0.01" class="form-control" id="precio{{ hotel.id }}" name="precio" value="{{ hotel.precio_noche }}" required>
+                                                    </div>
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input" type="checkbox" id="disponible{{ hotel.id }}" name="disponible" {% if hotel.disponible %}checked{% endif %}>
+                                                        <label class="form-check-label" for="disponible{{ hotel.id }}">
+                                                            Disponible
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                No hay hoteles registrados en el sistema.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

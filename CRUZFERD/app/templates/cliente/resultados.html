@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Resultados de búsqueda</h1>
+    <h2>Paquetes</h2>
+    <div class="row">
+        {% for paquete in paquetes %}
+        <div class="col-md-4">
+            <div class="card">
+                <img src="{{ paquete.imagen }}" alt="{{ paquete.nombre }}" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title">{{ paquete.nombre }}</h5>
+                    <p class="card-text">Destino: {{ paquete.destino }}</p>
+                    <p class="card-text">Precio: ${{ paquete.precio }}</p>
+                    <form action="{{ url_for('cliente.reservar') }}" method="get">
+                        <input type="hidden" name="paquete" value="{{ paquete.id }}">
+                        <button type="submit" class="btn btn-primary">Seleccionar Paquete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h2>Hoteles</h2>
+    <div class="row">
+        {% for hotel in hoteles %}
+        <div class="col-md-4">
+            <div class="card">
+                <img src="{{ hotel.imagen }}" alt="{{ hotel.nombre }}" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title">{{ hotel.nombre }}</h5>
+                    <p class="card-text">Ubicación: {{ hotel.ubicacion }}</p>
+                    <p class="card-text">Precio por noche: ${{ hotel.precio_noche }}</p>
+                    <form action="{{ url_for('cliente.reservar') }}" method="get">
+                        <input type="hidden" name="hotel" value="{{ hotel.id }}">
+                        <button type="submit" class="btn btn-primary">Seleccionar Hotel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h2>Vuelos</h2>
+    <div class="row">
+        {% for vuelo in vuelos %}
+        <div class="col-md-4">
+            <div class="card">
+                <img src="{{ vuelo.imagen }}" alt="{{ vuelo.origen }} - {{ vuelo.destino }}" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title">{{ vuelo.origen }} - {{ vuelo.destino }}</h5>
+                    <p class="card-text">Fecha de salida: {{ vuelo.fecha_salida }}</p>
+                    <p class="card-text">Precio: ${{ vuelo.precio }}</p>
+                    <form action="{{ url_for('cliente.reservar') }}" method="get">
+                        <input type="hidden" name="vuelo" value="{{ vuelo.id }}">
+                        <button type="submit" class="btn btn-primary">Seleccionar Vuelo</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

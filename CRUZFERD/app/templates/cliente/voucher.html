@@ -1,0 +1,148 @@
+{% extends "layout.html" %}
+
+{% block title %}Voucher de Reserva - Agencia de Viajes{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h2>Voucher de Reserva</h2>
+            <p class="text-muted">Este documento confirma su reserva con nuestra agencia</p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Confirmación de Reserva</h4>
+                        <span>Código: {{ reserva.codigo }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <h3>¡Gracias por su reserva!</h3>
+                        <p>Su pago ha sido procesado correctamente.</p>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Datos del Cliente</h5>
+                            <p><strong>Nombre:</strong> {{ reserva.cliente.nombre }} {{ reserva.cliente.apellido }}</p>
+                            <p><strong>Email:</strong> {{ reserva.cliente.email }}</p>
+                            <p><strong>Teléfono:</strong> {{ reserva.cliente.telefono }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Detalles de la Reserva</h5>
+                            <p><strong>Fecha de Reserva:</strong> {{ reserva.fecha_creacion }}</p>
+                            <p><strong>Estado:</strong> <span class="badge bg-success">Confirmada</span></p>
+                            <p><strong>Referencia de Pago:</strong> {{ reserva.ref_pago }}</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    {% if reserva.paquete_nombre %}
+                    <div class="mb-4">
+                        <h5>Paquete Turístico</h5>
+                        <p><strong>Nombre:</strong> {{ reserva.paquete_nombre }}</p>
+                        <p><strong>Descripción:</strong> {{ reserva.paquete_descripcion }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if reserva.hotel_nombre %}
+                    <div class="mb-4">
+                        <h5>Alojamiento</h5>
+                        <p><strong>Hotel:</strong> {{ reserva.hotel_nombre }}</p>
+                        <p><strong>Categoría:</strong> {{ reserva.hotel_categoria }} estrellas</p>
+                        <p><strong>Dirección:</strong> {{ reserva.hotel_ubicacion }}</p>
+                        <p><strong>Check-in:</strong> {{ reserva.fecha_inicio }} (a partir de las 15:00)</p>
+                        <p><strong>Check-out:</strong> {{ reserva.fecha_fin }} (hasta las 11:00)</p>
+                        <p><strong>Tipo de Habitación:</strong> {{ reserva.tipo_habitacion }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if reserva.vuelo_ruta %}
+                    <div class="mb-4">
+                        <h5>Vuelo</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Ida</h6>
+                                <p><strong>Número de Vuelo:</strong> {{ reserva.vuelo_numero_ida }}</p>
+                                <p><strong>Origen:</strong> {{ reserva.vuelo_origen }}</p>
+                                <p><strong>Destino:</strong> {{ reserva.vuelo_destino }}</p>
+                                <p><strong>Fecha:</strong> {{ reserva.vuelo_fecha_ida }}</p>
+                                <p><strong>Hora:</strong> {{ reserva.vuelo_hora_ida }}</p>
+                            </div>
+                            {% if reserva.vuelo_numero_vuelta %}
+                            <div class="col-md-6">
+                                <h6>Vuelta</h6>
+                                <p><strong>Número de Vuelo:</strong> {{ reserva.vuelo_numero_vuelta }}</p>
+                                <p><strong>Origen:</strong> {{ reserva.vuelo_destino }}</p>
+                                <p><strong>Destino:</strong> {{ reserva.vuelo_origen }}</p>
+                                <p><strong>Fecha:</strong> {{ reserva.vuelo_fecha_vuelta }}</p>
+                                <p><strong>Hora:</strong> {{ reserva.vuelo_hora_vuelta }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Personas</h5>
+                            <p><strong>Número de viajeros:</strong> {{ reserva.num_personas }}</p>
+                            <ul class="list-group">
+                                {% for viajero in reserva.viajeros %}
+                                <li class="list-group-item">{{ viajero.nombre }} {{ viajero.apellido }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Resumen de Pago</h5>
+                            <div class="d-flex justify-content-between">
+                                <span>Subtotal:</span>
+                                <span>${{ reserva.subtotal }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Impuestos (16%):</span>
+                                <span>${{ reserva.impuestos }}</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <h5>Total pagado:</h5>
+                                <h5>${{ reserva.precio_total }}</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle"></i> Información Importante</h5>
+                        <p>Presente este voucher al momento de su llegada.</p>
+                        <p>En caso de emergencia durante su viaje, contacte a nuestro servicio 24/7: <strong>+1 234 567 890</strong></p>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('cliente.dashboard') }}" class="btn btn-primary me-2">
+                            <i class="fas fa-home"></i> Ir al Dashboard
+                        </a>
+                        <a href="javascript:window.print()" class="btn btn-secondary">
+                            <i class="fas fa-print"></i> Imprimir Voucher
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <small class="text-muted">¡Gracias por confiar en Agencia de Viajes!</small>
+                    <br>
+                    <small class="text-muted">Este voucher fue generado el {{ fecha_actual }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

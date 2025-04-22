@@ -1,0 +1,165 @@
+{% extends "layout.html" %}
+
+{% block title %}Reserva - Agencia de Viajes{% endblock %}
+
+{% block content %}
+<h2>Detalles de la Reserva</h2>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Información de la Reserva</h4>
+            </div>
+            <div class="card-body">
+                {% if paquete %}
+                <div class="mb-4">
+                    <h5>Paquete: {{ paquete.nombre }}</h5>
+                    <p>{{ paquete.descripcion }}</p>
+                    <p><strong>Destino:</strong> {{ paquete.destino }}</p>
+                    <p><strong>Duración:</strong> {{ paquete.duracion }} días</p>
+                    <p><strong>Precio por persona:</strong> ${{ paquete.precio }}</p>
+                </div>
+                {% endif %}
+                
+                {% if hotel %}
+                <div class="mb-4">
+                    <h5>Hotel: {{ hotel.nombre }}</h5>
+                    <p>{{ hotel.descripcion }}</p>
+                    <p><strong>Ubicación:</strong> {{ hotel.ubicacion }}</p>
+                    <p><strong>Categoría:</strong> 
+                        {% for i in range(hotel.categoria) %}
+                        <i class="fas fa-star text-warning"></i>
+                        {% endfor %}
+                    </p>
+                    <p><strong>Precio por noche:</strong> ${{ hotel.precio_noche }}</p>
+                </div>
+                {% endif %}
+                
+                {% if vuelo %}
+                <div class="mb-4">
+                    <h5>Vuelo: {{ vuelo.origen }} - {{ vuelo.destino }}</h5>
+                    <p><strong>Aerolínea:</strong> {{ vuelo.aerolinea }}</p>
+                    <p><strong>Salida:</strong> {{ vuelo.fecha_salida }}</p>
+                    <p><strong>Llegada:</strong> {{ vuelo.fecha_llegada }}</p>
+                    <p><strong>Precio por persona:</strong> ${{ vuelo.precio }}</p>
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="{{ url_for('cliente.reservar') }}">
+                    {% if paquete %}
+                    <input type="hidden" name="id_paquete" value="{{ paquete.id }}">
+                    {% endif %}
+                    
+                    {% if hotel %}
+                    <input type="hidden" name="id_hotel" value="{{ hotel.id }}">
+                    {% endif %}
+                    
+                    {% if vuelo %}
+                    <input type="hidden" name="id_vuelo" value="{{ vuelo.id }}">
+                    {% endif %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
+                            <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" value="{{ fecha_inicio }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_fin" class="form-label">Fecha de Fin</label>
+                            <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" value="{{ fecha_fin }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="num_personas" class="form-label">Número de Personas</label>
+                        <input type="number" class="form-control" id="num_personas" name="num_personas" value="1" min="1" required>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Continuar a Pago</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Resumen</h4>
+            </div>
+            <div class="card-body">
+                <div id="resumen-reserva">
+                    <p><strong>Servicio:</strong> 
+                        {% if paquete %}Paquete: {{ paquete.nombre }}{% endif %}
+                        {% if hotel %}Hotel: {{ hotel.nombre }}{% endif %}
+                        {% if vuelo %}Vuelo: {{ vuelo.origen }} - {{ vuelo.destino }}{% endif %}
+                    </p>
+                    <p><strong>Fecha:</strong> <span id="resumen-fecha">{{ fecha_inicio }} al {{ fecha_fin }}</span></p>
+                    <p><strong>Personas:</strong> <span id="resumen-personas">1</span></p>
+                    <hr>
+                    <h5>Total: $<span id="resumen-total">
+                        {% if paquete %}{{ paquete.precio }}{% endif %}
+                        {% if hotel %}{{ hotel.precio_noche }}{% endif %}
+                        {% if vuelo %}{{ vuelo.precio }}{% endif %}
+                    </span></h5>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Información adicional -->
+        <div class="card mt-3">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Información</h4>
+            </div>
+            <div class="card-body">
+                <p><i class="fas fa-info-circle"></i> El pago se realizará en la siguiente pantalla.</p>
+                <p><i class="fas fa-shield-alt"></i> Todas las transacciones son seguras.</p>
+                <p><i class="fas fa-undo"></i> Política de cancelación: Hasta 48 horas antes de la fecha de inicio.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Actualizar resumen cuando cambian los valores
+    document.addEventListener('DOMContentLoaded', function() {
+        const numPersonasInput = document.getElementById('num_personas');
+        const fechaInicioInput = document.getElementById('fecha_inicio');
+        const fechaFinInput = document.getElementById('fecha_fin');
+        
+        const resumenPersonas = document.getElementById('resumen-personas');
+        const resumenFecha = document.getElementById('resumen-fecha');
+        const resumenTotal = document.getElementById('resumen-total');
+        
+        // Precio base (deberá venir del servidor)
+        const precioBase = parseFloat(resumenTotal.textContent.trim());
+        
+        function actualizarResumen() {
+            const numPersonas = parseInt(numPersonasInput.value);
+            resumenPersonas.textContent = numPersonas;
+            
+            // Actualizar fecha
+            resumenFecha.textContent = fechaInicioInput.value + ' al ' + fechaFinInput.value;
+            
+            // Calcular total según el tipo de reserva
+            {% if paquete %}
+            resumenTotal.textContent = (precioBase * numPersonas).toFixed(2);
+            {% elif hotel %}
+            const fechaInicio = new Date(fechaInicioInput.value);
+            const fechaFin = new Date(fechaFinInput.value);
+            const dias = Math.max(1, Math.round((fechaFin - fechaInicio) / (1000 * 60 * 60 * 24)));
+            resumenTotal.textContent = (precioBase * dias).toFixed(2);
+            {% elif vuelo %}
+            resumenTotal.textContent = (precioBase * numPersonas).toFixed(2);
+            {% endif %}
+        }
+        
+        numPersonasInput.addEventListener('input', actualizarResumen);
+        fechaInicioInput.addEventListener('change', actualizarResumen);
+        fechaFinInput.addEventListener('change', actualizarResumen);
+    });
+</script>
+{% endblock %}
